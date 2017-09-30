@@ -6,11 +6,12 @@
 
 ########## Variables
 
-dir=~/.files                    # dotfiles directory
 olddir=~/dotfiles_old             # old dotfiles backup directory
-files="bashrc vimrc vim zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
 
-##########
+########## Get paths to this script and this directory
+
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"                   # dotfiles directory
+this_file=`basename "$0"`
 
 # create dotfiles_old in homedir
 echo "Creating $olddir for backup of any existing dotfiles in ~"
@@ -23,9 +24,11 @@ cd $dir
 echo "...done"
 
 # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
-for file in $files; do
-  echo "Moving any existing dotfiles from ~ to $olddir"
-  mv ~/.$file ~/dotfiles_old/
-  echo "Creating symlink to $file in home directory."
-  ln -s $dir/$file ~/.$file
+for file in $(ls -A); do
+  if [ $file != $this_file ] && [ $file != ".git" ]; then
+    echo "Moving any existing dotfiles from ~ to $olddir"
+    mv ~/$file $olddir/
+    echo "Creating symlink to $file in home directory."
+    ln -s $dir/$file ~/$file
+  fi
 done
