@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+if ! [[ $1 =~ .+@.+ ]]; then
+  echo "Please use 'user@server[:port])' format."
+  exit 1
+fi
+
+user=$(echo $1 | cut -f1 -d@)
+host=$(echo $1 | cut -f2 -d@ | cut -f1 -d:)
+port=$(echo $1 | cut -f2 -d:)
+config=~/.ssh/config
+inputrc=~/.inputrc
+
+echo "Adding ssh keys and ssh config for:"
+echo "  user: $user"
+echo "  host: $host"
+
+ssh-copy-id -p ${port-"22"} "$user@$host"
+if [ -f $inputrc ] ; then scp $inputrc $1; fi
+
+if ! grep -q $host "$config"  ; then 
+  echo >> "$config"
+  echo "Host $host" >> "$config"
+  echo "  User $user" >> "$config"
+  if [[ $port =~ ^[1-9][0-9]*$ ]]; then echo "  Port $port" >> "$config"; fi
+fi
