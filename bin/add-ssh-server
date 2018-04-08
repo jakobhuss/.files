@@ -17,7 +17,6 @@ echo "  user: $user"
 echo "  host: $host"
 
 ssh-copy-id -p ${port-"22"} "$user@$host"
-if [ -f $inputrc ] ; then scp $inputrc $1; fi
 
 if ! grep -q $host "$config"  ; then 
   echo >> "$config"
@@ -25,3 +24,5 @@ if ! grep -q $host "$config"  ; then
   echo "  User $user" >> "$config"
   if [[ $port =~ ^[1-9][0-9]*$ ]]; then echo "  Port $port" >> "$config"; fi
 fi
+
+if [ -f $inputrc ] ; then scp $inputrc $host; fi
