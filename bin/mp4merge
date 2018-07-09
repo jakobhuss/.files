@@ -16,21 +16,21 @@ merge() {
 
 
 print_usage_and_exit() {
-  echo "Usage:"
-  echo "$0 source1.mp4 source2.mp4 ... sourceN.mp4 destination.mp4"
+  >&2 echo "Usage:"
+  >&2 echo "$0 source1.mp4 source2.mp4 ... sourceN.mp4 destination.mp4"
   exit 1
 }
 
 check_ffmpeg() {
   if [ ! which ffmpeg > /dev/null 2>&1 ] ; then
-    echo "please install ffmpeg for this script to work"
+    >&2 echo "please install ffmpeg for this script to work"
     exit 1 
   fi
 }
 
 check_input_args() {
-  if [ "$#" -eq 0 ]; then
-      echo "missing file operand"
+  if [ "$#" -lt 2 ]; then
+      >&2 echo "need at least 2 file operands"
       print_usage_and_exit
   fi
   for f in $@; do
@@ -43,11 +43,11 @@ check_input_args() {
 
 check_output_arg() {
   if [ "$#" -eq 0 ]; then
-      echo "missing destinaion operand"
+      >&2 echo "missing destinaion operand"
       print_usage_and_exit
   fi
   if [ -f $1 ] ; then
-    echo "$1 already exists"
+    >&2 echo "output file $1 already exists"
     exit 1
   fi
 }
