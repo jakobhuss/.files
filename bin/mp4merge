@@ -1,17 +1,17 @@
 #!/bin/bash
 
-input_args=${@:1:$#-1}
+input_args=("${@:1:$#-1}")
 output_arg=${!#}
 
 main() {
   check_ffmpeg
-  check_input_args $input_args
+  check_input_args "${input_args[@]}"
   check_output_arg $output_arg
   merge
 }
 
 merge() {
-  ffmpeg -f concat -i <( for $f in $input_args ; do echo $f ; done | sed -e 's/^/file /' ) -c copy $output_arg
+  ffmpeg -f concat -safe 0 -i <( for f in "${input_args[@]}" ; do echo "file '$(readlink -f "$f")'" ; done ) -c copy $output_arg
 }
 
 
@@ -29,12 +29,13 @@ check_ffmpeg() {
 }
 
 check_input_args() {
-  if [ "$#" -lt 2 ] ; then
+  files=("$@")
+  if [ ${#files[@]} -lt 2 ] ; then
     >&2 echo "need at least 2 file operands"
     print_usage_and_exit
   fi
-  for f in $@; do
-    if [ ! -f $f ] ; then
+  for f in "${files[@]}" ; do
+    if [ ! -f "$f" ] ; then
       printf '%s is not an existing file \n' "$f" >&2
       print_usage_and_exit
     fi
