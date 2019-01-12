@@ -9,3 +9,5 @@
   tree = !"git lg1"
 [core]
 	editor = vim
+
+	excludesfile = ~/.gitignore
