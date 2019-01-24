@@ -16,7 +16,7 @@ echo "Adding ssh keys and ssh config for:"
 echo "  user: $user"
 echo "  host: $host"
 
-ssh-copy-id -p ${port-"22"} "$user@$host"
+ssh-copy-id -p ${port-"22"} "$user@$host" -f
 
 if ! grep -q $host "$config"  ; then 
   echo >> "$config"
