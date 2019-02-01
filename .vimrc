@@ -9,3 +9,5 @@ set smartcase
 set relativenumber
 syntax on
 :set path=.,,**
+let g:netrw_liststyle = 3
+let g:netrw_banner = 0
