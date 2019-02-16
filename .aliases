@@ -1,6 +1,7 @@
-alias upup='sudo apt-get update && sudo apt-get -y upgrade'
 alias git-clean='git branch -vv|grep gone|awk "{print $1}"| xargs git branch -D'
 
 alias urlencode='python -c "import urllib, sys; print urllib.quote(  sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read()[0:-1])"'
-
 alias urldecode='python -c "import urllib, sys; print urllib.unquote(sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read()[0:-1])"'
+
+alias xclip='xclip -selection clipboard'
+alias trim='awk "{\$1=\$1};1"'
