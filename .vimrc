@@ -11,3 +11,6 @@ syntax on
 :set path=.,,**
 let g:netrw_liststyle = 3
 let g:netrw_banner = 0
+
+vnoremap ," xi""<Esc>Pf"l
+vnoremap ,' xi''<Esc>Pf'l
