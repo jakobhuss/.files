@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for f in $(cat $2); do
+  curl -L $1$f -w "%{response_code} %{url_effective}\n" -s -o /dev/null
+done
