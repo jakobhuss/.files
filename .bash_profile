@@ -8,3 +8,4 @@ fi
 # User specific environment and startup programs
 
 setxkbmap -layout se
+setxkbmap -option caps:escape
