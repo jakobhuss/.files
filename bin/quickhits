@@ -1,5 +1,8 @@
 #!/bin/bash
 
 for f in $(cat $2); do
-  curl --max-time 3 -L $1$f -w "%{response_code} %{url_effective}\n" -s -o /dev/null
+  f=$(echo $f | sed 's:^/*::')
+  base=$(echo $1 | sed 's:/*$::')
+  url=$base/$f
+  curl --max-time 3 -L $url -w "%{response_code} $url  %{url_effective}\n" -s -o /dev/null
 done
