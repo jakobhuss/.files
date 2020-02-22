@@ -1,7 +1,7 @@
 #!/bin/bash
 ############################
 # .make.sh
-# This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
+# This script creates symlinks from the home directory to any desired dotfiles in ~/.files
 ############################
 
 ########## Variables
@@ -25,7 +25,7 @@ echo "...done"
 
 # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
 for file in $(ls -A); do
-  if [ $file != $this_file ] && [ $file != ".git" ] && [ ! -L ~/$file ]; then
+  if [ $file != $this_file ] && [ $file != ".git" ] && [ $file != "makefile" ] && [ ! -L ~/$file ]; then
     echo "Moving any existing dotfiles from ~ to $olddir"
     mv ~/$file $olddir/
     echo "Creating symlink to $file in home directory."

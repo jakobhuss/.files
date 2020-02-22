@@ -5,3 +5,9 @@ alias urldecode='python -c "import urllib, sys; print urllib.unquote(sys.argv[1]
 
 alias xclip='xclip -selection clipboard'
 alias trim='awk "{\$1=\$1};1"'
+
+alias python=python3
+
+alias git-pull-all='for d in $(find -name .git | xargs dirname ) ; do pushd $d && git pull && popd ; done'
+
+if [[ -x "$(command -v vimx)" ]]; then alias vim='vimx'; fi
