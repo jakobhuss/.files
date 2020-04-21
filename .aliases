@@ -11,3 +11,66 @@ alias python=python3
 alias git-pull-all='for d in $(find -name .git | xargs dirname ) ; do pushd $d && git pull && popd ; done'
 
 if [[ -x "$(command -v vimx)" ]]; then alias vim='vimx'; fi
+
+alias wordlist="tr -sc '[a-zA-Z0-9-_]' '\n' | sort -u"
+alias uris="tr -sc '[a-zA-Z0-9-_/:?&.%~<>=]' '\n' | grep -Ev '<|>' | grep '/' | sort -u"
+alias urls="grep -oaE 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)' | sort -u"
+alias curl-all="parallel curl -m 5 -siL 2>/dev/null"
+alias lower="tr [:upper:] [:lower:]"
+alias upper="tr [:lower:] [:upper:]"
+
+alias host2ip="xargs -n1 -P30 host | grep 'has address' | cut -d ' ' -f4 | sort -u"
+
+alias bounty-wildcard-domains="curl -Ls https://github.com/arkadiyt/bounty-targets-data/raw/master/data/wildcards.txt | sed -e 's/^\**\.*//g' |  grep -E '^[a-z0-9A-Z.-]+$' | sort -u "
+alias bounty-domains="cat <( bounty-wildcard-domains ) <(curl -Ls https://github.com/arkadiyt/bounty-targets-data/raw/master/data/domains.txt ) | sort -u"
+alias bounty-domains-project="xzcat /opt/hack/domains/data/*/*.xz | grep -f <( bounty-wildcard-domains | grep -vE 'tumblr.com|zendesk.com|alibaba.com|wordcamp.org|tmall.com|1688.com|taobao.com|wordpress.org|quora.com|aliexpress.com|vhx.tv|aliyun.com|statuspage.io' | sed 's/$/\$/' | sed 's/^/\\\\./' )"
+
+alias download-recurive-1="xargs -n1 -P10 wget -r -l 1"
+alias wordlist-subdomains='wordlist | lower | sort -u | grep -vE ".{60,}" | sed "s/[^[:alnum:]\s.-]//g" | sed -E 's/^[^a-z0-9]+//g' | sed -E 's/[^a-z0-9]+$//g' | sort | uniq'
+
+
+function exclusive () {
+  cat ${@:1} | sort | uniq -u | xargs -I{} grep {} ${@:1} | sort
+}
+
+function live () {
+  xargs -n1 -P40 -I{} bash -c 'host "{}" > /dev/null && echo "{}"'
+}
+
+function subd_prefix () {
+  grep -E "^[a-z0-9A-Z.-]+$" | psl --print-reg-domain | awk '{gsub(".?"$2":", "", $1) ; print($1)}' | grep "\S"
+}
+
+function massdns () {
+  /opt/hack/massdns/bin/massdns -r /opt/hack/massdns/lists/many.txt -t A -o S --flush | cut -f1 -d' ' | sed 's/\.$//g' | live
+}
+
+function amass () {
+  docker build -t amass https://github.com/OWASP/Amass.git 2>&1 >/dev/null
+  docker run -v $(pwd):/.config/amass amass $@
+}
+
+function http-pipeline () {
+  (for i in $(cat /opt/hack/SecLists/Discovery/Web-Content/quickhits.txt) ; do echo -en "GET $i HTTP/1.1\r\nHost: $1\r\n\r\n"; done ; sleep 25) | openssl s_client -connect $1:443
+}
+
+function dl-site () {
+  site=$1
+  domain=$( echo $site | sed -E 's/^https?:\/\///g' | sed -E 's/\/.*$//g' )
+  user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+  includes="php,asp,aspx,csv,json,xml,htm,jsonld,xhtml,txt,js,html"
+  timeout=10
+  wget -T $timeout --no-check-certificate --save-headers -H -p -A "$includes" -D $domain -U "$user_agent" $site
+}
+
+function comb () {
+  words1=$(cat $1)
+  words2=$(cat $2)
+  for w1 in $words1
+  do
+    for w2 in $words2
+    do
+      echo "$w1$w2"
+    done
+  done
+}
