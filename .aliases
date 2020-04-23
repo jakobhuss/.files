@@ -18,6 +18,7 @@ alias urls="grep -oaE 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z
 alias curl-all="parallel curl -m 5 -siL 2>/dev/null"
 alias lower="tr [:upper:] [:lower:]"
 alias upper="tr [:lower:] [:upper:]"
+alias sus="sort | uniq | sort -k1n"
 
 alias host2ip="xargs -n1 -P30 host | grep 'has address' | cut -d ' ' -f4 | sort -u"
 
@@ -61,6 +62,10 @@ function dl-site () {
   includes="php,asp,aspx,csv,json,xml,htm,jsonld,xhtml,txt,js,html"
   timeout=10
   wget --content-on-error --tries=2 -T $timeout --no-check-certificate --save-headers -H -p -A "$includes" -D $domain -U "$user_agent" $site
+}
+
+function bighits () {
+  quickhits $1 /opt/hack/SecLists/Discovery/Web-Content/big.txt
 }
 
 function comb () {
