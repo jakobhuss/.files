@@ -2,7 +2,7 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/go/bin:$HOME/.cargo/bin:$PATH"
 
 if [ -f ~/.aliases ]; then
 	. ~/.aliases

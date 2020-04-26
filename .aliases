@@ -8,6 +8,11 @@ alias trim='awk "{\$1=\$1};1"'
 
 alias python=python3
 
+alias f1="tr -s ' ' | cut -d' ' -f1"
+alias f2="tr -s ' ' | cut -d' ' -f2"
+alias f3="tr -s ' ' | cut -d' ' -f3"
+alias f4="tr -s ' ' | cut -d' ' -f4"
+
 alias git-pull-all='for d in $(find -name .git | xargs dirname ) ; do pushd $d && git pull && popd ; done'
 
 if [[ -x "$(command -v vimx)" ]]; then alias vim='vimx'; fi
@@ -43,7 +48,7 @@ function subd_prefix () {
 }
 
 function massdns () {
-  /opt/hack/massdns/bin/massdns -r /opt/hack/massdns/lists/many.txt -t A -o S --flush | cut -f1 -d' ' | sed 's/\.$//g' | live
+  /opt/hack/massdns/bin/massdns -r /opt/hack/massdns/lists/many.txt -t A -o S --flush | cut -f1 -d' ' | sed 's/\.$//g'| uniq | live
 }
 
 function amass () {

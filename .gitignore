@@ -4,7 +4,6 @@
 .metadata/
 target/
 .springBeans
-bin
 .gitignore
 .DS_Store
 *.pyc
