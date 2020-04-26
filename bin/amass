@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker build -t amass https://github.com/OWASP/Amass.git &>/dev/null
+
+mkdir -p amass
+
+docker run -v $(pwd)/amass:/.config/amass amass "${@:1}"

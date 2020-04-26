@@ -1,0 +1,7 @@
+#!/bin/bash
+
+while read d
+do
+  for ns in $(dig -t NS $d +short); do echo @${ns%.} ; echo $d ; done | \
+    parallel -n2 -j50 "dig axfr +time=5 +tries=1 {} | grep -v '^;' | grep '\S'"
+done < "${1:-/dev/stdin}"

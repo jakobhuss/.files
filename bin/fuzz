@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import random
+import string
+import sys
+
+import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+def random_junk(length):
+    return ''.join((random.choice(string.printable) for _ in range(random.randint(1, length))))
+
+
+original_url = sys.argv[1]
+s = requests.session()
+
+
+def test(template, junk):
+    global s
+    try:
+        url = template.replace('*', junk).replace('FUZZ', junk)
+        r = s.get(url=url)
+        print(r.status_code, len(r.text), r.url)
+    except Exception as e:
+        s = requests.session()
+
+
+for i in range(0, 128):
+    test(original_url, chr(i))
+
+for i in range(100):
+    test(original_url, random_junk(5))

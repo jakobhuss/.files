@@ -1,7 +1,12 @@
 #!/bin/bash
 
+
+rand_string=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+not_found_filter=$(curl --max-time 10 -L $1$rand_string -w "%{response_code} %{size_download}" -k -s -o /dev/null)
+not_found_filter="$not_found_filter|$(curl --max-time 10 -L $1.$rand_string -w "%{response_code} %{size_download}" -k -s -o /dev/null)"
+
 for f in $(cat ${2:-/opt/hack/SecLists/Discovery/Web-Content/quickhits.txt}); do
   f=$(echo $f | sed 's/^\///g') 
   url=$1$f
   echo $url
-done | xargs -n1 -P30 -I {} curl --max-time 10 -L {} -w "%{response_code} %{size_download} {}  %{url_effective}\n" -k -s -o /dev/null | grep -v "000 0"
+done | xargs -n1 -P20 -I {} curl --max-time 10 -L {} -w "%{response_code} %{size_download} {}  %{url_effective}\n" -k -s -o /dev/null | grep -v "000 0" | grep -vE "$not_found_filter"
