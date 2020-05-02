@@ -1,7 +1,9 @@
 #!/bin/bash
 
-while read d
-do
-  for ns in $(dig -t NS $d +short); do echo @${ns%.} ; echo $d ; done | \
-    parallel -n2 -j50 "dig axfr +time=5 +tries=1 {} | grep -v '^;' | grep '\S'"
-done < "${1:-/dev/stdin}"
+cat ${1:-/dev/stdin} | \
+  xargs -n1 -I{} -P30 bash -c "dig -t NS '{}' +short | sed 's/\.$/ {}/g'" | \
+  sort -u -t' ' -k1,1 | \
+  xargs -n2 -P20 -I{} bash -c "dig axfr +time=5 +tries=1 @{}"  | \
+  grep -v '^;' | \
+  grep '\S' | \
+  sort -u
