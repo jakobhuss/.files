@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import multiprocessing as mp
 import random
 import string
 import sys
@@ -18,18 +19,24 @@ original_url = sys.argv[1]
 s = requests.session()
 
 
-def test(template, junk):
+def test(junk):
     global s
+    global original_url
     try:
-        url = template.replace('*', junk).replace('FUZZ', junk)
+        url = original_url.replace('*', junk).replace('FUZZ', junk)
         r = s.get(url=url)
         print(r.status_code, len(r.text), r.url)
-    except Exception as e:
         s = requests.session()
+    except:
+        return
 
+def fuzz_data():
+    for i in range(0, 128):
+        yield chr(i)
+    for i in range(100):
+        yield random_junk(5)
 
-for i in range(0, 128):
-    test(original_url, chr(i))
+pool = mp.Pool(mp.cpu_count())
+pool.map(test, fuzz_data())
 
-for i in range(100):
-    test(original_url, random_junk(5))
+pool.close()
